@@ -15,8 +15,8 @@ mesin yang relevan (Mac untuk Core, Windows untuk UI).
 - [x] Struktur solusi (.sln) + kedua project (Core .fsproj, UI .vbproj)
 - [x] Reference UI → Core terpasang
 - [x] `dotnet restore` + `dotnet build` untuk **Core** — diverifikasi di Mac (sebelum LLamaSharp ditambahkan)
-- [ ] `dotnet restore` + `dotnet build` untuk **Core** dengan LLamaSharp — belum diverifikasi ulang setelah `AiEngine.fs` ditambahkan
-- [ ] `dotnet test` untuk project test (`NgapainRibet.Rapor.Core.Tests`) — belum diverifikasi
+- [x] `dotnet restore` + `dotnet build` untuk **Core** dengan LLamaSharp — belum diverifikasi ulang setelah `AiEngine.fs` ditambahkan ==> all good, no errors
+- [x] `dotnet test` untuk project test (`NgapainRibet.Rapor.Core.Tests`) — belum diverifikasi ==> all good, no errors
 - [ ] `dotnet restore` + `dotnet build` untuk **UI** — belum diverifikasi (perlu Windows)
 - [ ] Build solusi penuh (`dotnet build NgapainRibet.Rapor.sln`) dari root — belum diverifikasi
 
