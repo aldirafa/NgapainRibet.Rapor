@@ -7,6 +7,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "NgapainRibet.Rapor.Core", "
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "NgapainRibet.Rapor.UI", "src\NgapainRibet.Rapor.UI\NgapainRibet.Rapor.UI.vbproj", "{3EDDAEF8-B15E-4D89-A504-E28E5EC24B9A}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "NgapainRibet.Rapor.Core.Tests", "tests\NgapainRibet.Rapor.Core.Tests\NgapainRibet.Rapor.Core.Tests.fsproj", "{E0BC9ACC-60C5-4D71-9309-A27D2B61B748}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{3EDDAEF8-B15E-4D89-A504-E28E5EC24B9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3EDDAEF8-B15E-4D89-A504-E28E5EC24B9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3EDDAEF8-B15E-4D89-A504-E28E5EC24B9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0BC9ACC-60C5-4D71-9309-A27D2B61B748}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0BC9ACC-60C5-4D71-9309-A27D2B61B748}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0BC9ACC-60C5-4D71-9309-A27D2B61B748}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0BC9ACC-60C5-4D71-9309-A27D2B61B748}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

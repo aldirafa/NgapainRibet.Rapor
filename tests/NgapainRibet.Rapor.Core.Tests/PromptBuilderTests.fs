@@ -1,0 +1,53 @@
+module NgapainRibet.Rapor.Core.Tests.PromptBuilderTests
+
+open Xunit
+open NgapainRibet.Rapor.Core.DomainModels
+open NgapainRibet.Rapor.Core.PromptBuilder
+
+let private sampleStudent =
+    { Name = "Siti Aminah"
+      Strengths = [ "Aljabar"; "Geometri" ]
+      Weaknesses = [ "Statistika" ]
+      Tone = "Memotivasi" }
+
+[<Fact>]
+let ``buildSystemPrompt menyertakan nama mata pelajaran`` () =
+    let prompt = buildSystemPrompt "Matematika" sampleStudent
+    Assert.Contains("Matematika", prompt)
+
+[<Fact>]
+let ``buildSystemPrompt menyertakan tone yang dipilih`` () =
+    let prompt = buildSystemPrompt "Matematika" sampleStudent
+    Assert.Contains("Memotivasi", prompt)
+
+[<Fact>]
+let ``buildSystemPrompt menggabungkan beberapa Strengths dengan kata 'dan'`` () =
+    let prompt = buildSystemPrompt "Matematika" sampleStudent
+    Assert.Contains("Aljabar, dan Geometri", prompt)
+
+[<Fact>]
+let ``buildSystemPrompt menyertakan Weaknesses tunggal`` () =
+    let prompt = buildSystemPrompt "Matematika" sampleStudent
+    Assert.Contains("Statistika", prompt)
+
+[<Fact>]
+let ``buildSystemPrompt menangani Strengths kosong tanpa error`` () =
+    let student = { sampleStudent with Strengths = [] }
+    let prompt = buildSystemPrompt "Matematika" student
+    Assert.Contains("belum ada Capaian Pembelajaran yang menonjol", prompt)
+
+[<Fact>]
+let ``buildSystemPrompt menangani Weaknesses kosong tanpa error`` () =
+    let student = { sampleStudent with Weaknesses = [] }
+    let prompt = buildSystemPrompt "Matematika" student
+    Assert.Contains("belum ada area yang memerlukan bimbingan khusus saat ini", prompt)
+
+[<Fact>]
+let ``buildUserPrompt menyertakan nama siswa`` () =
+    let prompt = buildUserPrompt sampleStudent
+    Assert.Contains("Siti Aminah", prompt)
+
+[<Fact>]
+let ``buildUserPrompt singkat dan to the point`` () =
+    let prompt = buildUserPrompt sampleStudent
+    Assert.True(prompt.Length < 150, "User prompt seharusnya pendek — instruksi detail ada di system prompt")
