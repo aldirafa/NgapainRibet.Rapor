@@ -31,15 +31,15 @@ mesin yang relevan (Mac untuk Core, Windows untuk UI).
 - [x] Logic download & cache model GGUF dari HuggingFace (`ModelManager.fs`)
   - [x] Cek apakah file `.gguf` sudah ada di cache lokal
   - [x] Download dengan progress reporting (`DownloadState`)
-  - [ ] Verifikasi end-to-end (download sungguhan dari HuggingFace) — belum dicoba ==> cara cobanya gimana?
+  - [x] Verifikasi end-to-end (download sungguhan dari HuggingFace) — belum dicoba ==> berhasil, coba manual di unit tests dengan tambahin `ModelManagerTests.fs`
 - [x] Loading model via LLamaSharp (CPU-only, context window kecil 512–1024 token)
   - [x] Kode ditulis di `AiEngine.fs` (`loadModelAsync`)
-  - [x] **Belum pernah di-compile** — sandbox tidak punya .NET SDK/akses NuGet. Compile di Mac dulu, perbaiki kalau ada mismatch tipe kecil di `ModelParams` ==> Compile di mac berhasil tanpa ada type mismatch
+  - [x] Compile di mac berhasil tanpa ada type mismatch
 - [x] Builder prompt sistem dinamis dari checklist (Strengths/Weaknesses/Tone) — pakai istilah Kurikulum Merdeka (Capaian Pembelajaran, Bimbingan, Kompetensi)
   - [x] Kode ditulis & **diuji** (`PromptBuilder.fs` + test xUnit) — ini murni logic, tidak butuh LLamaSharp, jadi confidence tinggi ==> test xUnit berhasil semua
 - [x] Fungsi inference (generate narasi) — expose sebagai `Task<string>` / streaming yang gampang dikonsumsi VB.NET
   - [x] Kode ditulis di `AiEngine.fs` (`generateAsync`, streaming lewat `Action<string>`)
-  - [x] **Belum pernah di-compile/jalan** — sama seperti `loadModelAsync` di atas ==> so far gaada compile error atau build error
+  - [x] So far gaada compile error atau build error
 - [x] Unit test untuk domain logic & prompt builder (`NgapainRibet.Rapor.Core.Tests`, xUnit)
   - [x] Jalankan `dotnet test` di Mac untuk konfirmasi benar-benar lulus ==> aman semua
 

@@ -26,6 +26,9 @@ module ModelManager =
     let defaultModelUrl =
         "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/qwen2.5-1.5b-instruct-q4_k_m.gguf"
 
+    let defaultSha256 =
+        "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e"
+
     /// Folder cache lokal tempat semua file .gguf disimpan.
     /// Mac/Linux: ~/.local/share/NgapainRibetRapor/models
     /// Windows:   %LOCALAPPDATA%\NgapainRibetRapor\models
@@ -49,11 +52,13 @@ module ModelManager =
     /// sudah ada, langsung melapor `Completed` tanpa download ulang.
     /// Didesain dengan callback (bukan IAsyncEnumerable/event F#) supaya
     /// gampang dikonsumsi dari VB.NET di sisi UI.
+    /// note: sha256 without "-"
     let downloadModelAsync
         (url: string)
         (fileName: string)
         (onProgress: Action<DownloadState>)
         (ct: CancellationToken)
+        (sha256: string)
         : Task<DownloadState> =
         task {
             let destPath = getModelPath fileName
@@ -106,6 +111,19 @@ module ModelManager =
                     fileStream.Close()
                     File.Move(tempPath, destPath)
                     onProgress.Invoke(Completed)
+
+                    // verify SHA256 checksum
+                    use sha256Alg = System.Security.Cryptography.SHA256.Create()
+                    use fileStreamForHash = File.OpenRead destPath
+                    let hashBytes = sha256Alg.ComputeHash fileStreamForHash
+
+                    let hashString =
+                        BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant()
+
+                    if hashString <> sha256 then
+                        onProgress.Invoke(Error "SHA256 checksum mismatch")
+                        failwith "SHA256 checksum mismatch"
+
                     return Completed
                 with
                 | :? OperationCanceledException ->

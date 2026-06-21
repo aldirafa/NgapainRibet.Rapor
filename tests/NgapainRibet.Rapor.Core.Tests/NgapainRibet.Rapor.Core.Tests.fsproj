@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="ModelManagerTests.fs" />
     <Compile Include="DomainModelsTests.fs" />
     <Compile Include="PromptBuilderTests.fs" />
   </ItemGroup>
