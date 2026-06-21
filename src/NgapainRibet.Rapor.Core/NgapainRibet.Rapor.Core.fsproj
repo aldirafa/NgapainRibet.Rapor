@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>NgapainRibet.Rapor.Core</RootNamespace>
+    <AssemblyName>NgapainRibet.Rapor.Core</AssemblyName>
+
+    <!--
+      Catatan: Project ini di-set sebagai library biasa (bukan AnyCPU murni)
+      karena LLamaSharp native backend (llama.cpp) hanya tersedia untuk
+      x64 dan ARM64. Sesuaikan RuntimeIdentifiers saat publish.
+    -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      Urutan compile PENTING di F# (top-down dependency resolution).
+      DomainModels.fs harus dikompilasi sebelum file yang menggunakan
+      tipe-tipenya.
+    -->
+    <Compile Include="DomainModels.fs" />
+    <Compile Include="Library.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      TODO (langkah berikutnya): tambahkan LLamaSharp setelah domain model
+      & arsitektur core selesai didesain, supaya kita tidak menyeret
+      dependency berat sebelum kontraknya jelas.
+
+      <PackageReference Include="LLamaSharp" Version="0.27.0" />
+      <PackageReference Include="LLamaSharp.Backend.Cpu" Version="0.27.0" />
+    -->
+  </ItemGroup>
+
+</Project>

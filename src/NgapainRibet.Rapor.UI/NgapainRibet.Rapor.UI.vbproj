@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>NgapainRibet.Rapor.UI</RootNamespace>
+    <AssemblyName>NgapainRibet.Rapor</AssemblyName>
+    <ApplicationIcon />
+    <StartupObject>NgapainRibet.Rapor.UI.Program</StartupObject>
+
+    <!--
+      Catatan: target framework sengaja "net10.0-windows" (bukan
+      cross-platform) karena WinForms hanya didukung di Windows.
+    -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Program.vb" />
+    <Compile Include="Form1.vb" />
+    <Compile Include="Form1.Designer.vb">
+      <DependentUpon>Form1.vb</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Reference ke F# Core — UI TIDAK BOLEH berisi logic AI/data parsing,
+         hanya event handling & presentation (lihat instruksi proyek bagian 5). -->
+    <ProjectReference Include="..\NgapainRibet.Rapor.Core\NgapainRibet.Rapor.Core.fsproj" />
+  </ItemGroup>
+
+</Project>
