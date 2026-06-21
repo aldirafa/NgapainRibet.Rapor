@@ -13,8 +13,12 @@ open NgapainRibet.Rapor.Core.DomainModels
 /// </summary>
 module PromptBuilder =
 
+    /// <summary>
     /// Gabungkan daftar topik jadi satu kalimat enak dibaca.
     /// Contoh: ["Aljabar"; "Geometri"] -> "Aljabar dan Geometri"
+    /// </summary>
+    /// <param name="topics">Daftar topik.</param>
+    /// <returns>Kalimat yang menggabungkan semua topik.</returns>
     let private joinTopics (topics: string list) : string =
         match topics with
         | [] -> ""
@@ -24,8 +28,13 @@ module PromptBuilder =
             let last = topics |> List.last
             $"{allBustLast}, dan {last}"
 
+    /// <summary>
     /// Bangun system prompt dinamis dari checklist Strengths/Weaknesses/Tone.
     /// `subject` adalah mata pelajaran (mis. "Matematika").
+    /// </summary>
+    /// <param name="subject">Mata pelajaran.</param>
+    /// <param name="student">Data siswa.</param>
+    /// <returns>System prompt yang dibangun.</returns>
     let buildSystemPrompt (subject: string) (student: Student) : string =
         let strengthsText =
             if List.isEmpty student.Strengths then
@@ -69,6 +78,10 @@ module PromptBuilder =
         sb.AppendLine($"Siswa ini {strengthsText}, dan {weaknessesText}.") |> ignore
         sb.ToString()
 
+    /// <summary>
     /// Bangun user prompt — pemicu singkat untuk LLM mulai menulis narasi.
+    /// </summary>
+    /// <param name="student">Data siswa.</param>
+    /// <returns>User prompt yang dibangun.</returns>
     let buildUserPrompt (student: Student) : string =
         $"Tuliskan deskripsi Capaian Kompetensi untuk {student.Name} sesuai instruksi di atas."

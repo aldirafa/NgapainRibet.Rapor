@@ -23,9 +23,14 @@ module ModelManager =
     /// dari repo resmi Qwen di HuggingFace. Dicek tersedia per Juni 2026.
     let defaultModelFileName = "qwen2.5-1.5b-instruct-q4_k_m.gguf"
 
+    /// URL lengkap ke file model GGUF di HuggingFace. Didesain supaya mudah
+    /// diganti kalau modelnya dihapus atau ada versi baru yang lebih bagus.
     let defaultModelUrl =
         "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/qwen2.5-1.5b-instruct-q4_k_m.gguf"
 
+    /// SHA256 checksum dari file model GGUF, untuk verifikasi integritas
+    /// setelah download. Dihitung dari file yang di-download langsung dari
+    /// HuggingFace per Juni 2026.
     let defaultSha256 =
         "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e"
 
@@ -40,19 +45,34 @@ module ModelManager =
         Directory.CreateDirectory(dir) |> ignore
         dir
 
+    /// <summary>
     /// Path lengkap ke file model tertentu di cache lokal (belum tentu ada).
+    /// </summary>
+    /// <param name="fileName">Nama file model.</param>
+    /// <returns>Path lengkap ke file model di cache lokal.</returns>
     let getModelPath (fileName: string) : string =
         Path.Combine(getCacheDirectory (), fileName)
 
+    /// <summary>
     /// Cek apakah file model sudah ada di cache lokal.
+    /// </summary>
+    /// <param name="fileName">Nama file model.</param>
+    /// <returns>True jika file model sudah ada di cache lokal, false jika belum.</returns>
     let isModelCached (fileName: string) : bool = File.Exists(getModelPath fileName)
 
+    /// <summary>
     /// Download model dari `url` ke cache lokal sebagai `fileName`, melapor
     /// progress lewat `onProgress`. Aman dipanggil berkali-kali — kalau file
     /// sudah ada, langsung melapor `Completed` tanpa download ulang.
     /// Didesain dengan callback (bukan IAsyncEnumerable/event F#) supaya
     /// gampang dikonsumsi dari VB.NET di sisi UI.
-    /// note: sha256 without "-"
+    /// </summary>
+    /// <param name="url">URL lengkap ke file model GGUF di HuggingFace.</param>
+    /// <param name="fileName">Nama file model di cache lokal.</param>
+    /// <param name="onProgress">Callback untuk melaporkan progress download.</param>
+    /// <param name="ct">CancellationToken untuk membatalkan proses download jika diperlukan.</param>
+    /// <param name="sha256">SHA256 checksum dari file model untuk verifikasi integritas. Kita pakai sha256 tanpa "-".</param>
+    /// <returns>Task yang menghasilkan status download setelah selesai.</returns>
     let downloadModelAsync
         (url: string)
         (fileName: string)
@@ -64,7 +84,7 @@ module ModelManager =
             let destPath = getModelPath fileName
 
             if File.Exists destPath then
-                onProgress.Invoke Completed
+                onProgress.Invoke(Completed)
                 return Completed
             else
                 onProgress.Invoke(Downloading 0.0)
@@ -120,7 +140,8 @@ module ModelManager =
                     let hashString =
                         BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant()
 
-                    if hashString <> sha256 then
+                    // sha256 kalau ada "-" dihapus aja
+                    if hashString <> sha256.Replace("-", "").ToLowerInvariant() then
                         onProgress.Invoke(Error "SHA256 checksum mismatch")
                         failwith "SHA256 checksum mismatch"
 
