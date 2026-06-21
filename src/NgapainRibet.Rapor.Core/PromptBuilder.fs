@@ -48,40 +48,54 @@ module PromptBuilder =
             else
                 $"masih memerlukan bimbingan lebih lanjut pada {joinTopics student.Weaknesses}"
 
+        let notesText =
+            if String.IsNullOrWhiteSpace student.Notes then
+                ""
+            else
+                $"Catatan tambahan dari guru terkait siswa ini: {student.Notes}"
+
         let sb = StringBuilder()
 
-        sb.AppendLine(
+        sb.AppendLine
             "Anda adalah asistem guru yang membantu menyusun deskripsi Capaian Kompetensi pada rapor siswa, sesuai ketentuan Kurikulum Merdeka yang berlaku di Indonesia."
-        )
         |> ignore
 
-        sb.AppendLine($"Mata pelajaran: {subject}.") |> ignore
+        sb.AppendLine $"Mata pelajaran: {subject}." |> ignore
 
-        sb.AppendLine($"Gunakan nada penulisan {student.Tone} dalam menyusun narasi rapor.")
+        sb.AppendLine $"Gunakan nada penulisan {student.Tone} dalam menyusun narasi rapor."
         |> ignore
 
-        sb.AppendLine("Aturan penulisan:") |> ignore
+        sb.AppendLine "Aturan penulisan:" |> ignore
 
-        sb.AppendLine(
+        sb.AppendLine
             "* Tulis 2-3 kalimat narasi dalam Bahasa Indonesia sesuai EYD V terbaru, dengan memperhatikan tanda baca, ejaan, dan struktur kalimat yang baik serta personal."
-        )
         |> ignore
 
-        sb.AppendLine("* Jangan gunakan format daftar/bullet, tulis sebagai paragraf.")
+        sb.AppendLine "* Jangan gunakan format daftar/bullet, tulis sebagai paragraf."
         |> ignore
 
-        sb.AppendLine("* Jangan mengulang nama siswa lebih dari sekali.") |> ignore
+        sb.AppendLine "* Jangan mengulang nama siswa lebih dari sekali." |> ignore
 
-        sb.AppendLine("* Fokus pada kompetensi yang dicapai dan saran konstruktif, bukan menghakimi.")
+        sb.AppendLine "* Fokus pada kompetensi yang dicapai dan saran konstruktif, bukan menghakimi."
         |> ignore
 
-        sb.AppendLine($"Siswa ini {strengthsText}, dan {weaknessesText}.") |> ignore
+        sb.AppendLine $"Siswa ini {strengthsText}, dan {weaknessesText}." |> ignore
+
+        if not (String.IsNullOrWhiteSpace notesText) then
+            sb.AppendLine notesText |> ignore
+
         sb.ToString()
 
     /// <summary>
     /// Bangun user prompt — pemicu singkat untuk LLM mulai menulis narasi.
     /// </summary>
     /// <param name="student">Data siswa.</param>
+    /// <param name="additionalNotes">Catatan tambahan dari guru.</param>
     /// <returns>User prompt yang dibangun.</returns>
-    let buildUserPrompt (student: Student) : string =
-        $"Tuliskan deskripsi Capaian Kompetensi untuk {student.Name} sesuai instruksi di atas."
+    let buildUserPrompt (student: Student) (additionalNotes: string option) : string =
+        let r =
+            $"Tuliskan deskripsi Capaian Kompetensi untuk {student.Name} sesuai instruksi di atas."
+
+        match additionalNotes with
+        | Some notes when not (String.IsNullOrWhiteSpace notes) -> $"{r} {Environment.NewLine}Catatan tambahan: {notes}"
+        | _ -> r

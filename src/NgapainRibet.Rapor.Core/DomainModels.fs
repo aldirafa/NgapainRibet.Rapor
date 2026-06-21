@@ -46,4 +46,6 @@ module DomainModels =
             Weaknesses: string list
             /// Nada/Style narasi rapor yang dipilih guru (misal: "formal", "humoris", dst).
             Tone: string
+            /// Catatan tambahan yang ditulis guru di TextBox, dipakai untuk menyesuaikan narasi rapor.
+            Notes: string
         }

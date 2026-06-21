@@ -8,7 +8,8 @@ let private sampleStudent =
     { Name = "Siti Aminah"
       Strengths = [ "Aljabar"; "Geometri" ]
       Weaknesses = [ "Statistika" ]
-      Tone = "Memotivasi" }
+      Tone = "Memotivasi"
+      Notes = "Siti sangat aktif di kelas dan selalu bersemangat dalam belajar." }
 
 [<Fact>]
 let ``buildSystemPrompt menyertakan nama mata pelajaran`` () =
@@ -44,10 +45,10 @@ let ``buildSystemPrompt menangani Weaknesses kosong tanpa error`` () =
 
 [<Fact>]
 let ``buildUserPrompt menyertakan nama siswa`` () =
-    let prompt = buildUserPrompt sampleStudent
+    let prompt = buildUserPrompt sampleStudent None
     Assert.Contains("Siti Aminah", prompt)
 
 [<Fact>]
 let ``buildUserPrompt singkat dan to the point`` () =
-    let prompt = buildUserPrompt sampleStudent
+    let prompt = buildUserPrompt sampleStudent None
     Assert.True(prompt.Length < 150, "User prompt seharusnya pendek — instruksi detail ada di system prompt")

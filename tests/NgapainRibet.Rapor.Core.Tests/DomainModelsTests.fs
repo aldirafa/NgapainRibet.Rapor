@@ -32,12 +32,14 @@ let ``Student record bisa dibuat dengan field sesuai spesifikasi`` () =
         { Name = "Siti Aminah"
           Strengths = [ "Aljabar"; "Geometri" ]
           Weaknesses = [ "Statistika" ]
-          Tone = "Memotivasi" }
+          Tone = "Memotivasi"
+          Notes = "Siti sangat aktif di kelas dan selalu bersemangat dalam belajar." }
 
     Assert.Equal("Siti Aminah", student.Name)
     Assert.Equal<string list>([ "Aljabar"; "Geometri" ], student.Strengths)
     Assert.Equal<string list>([ "Statistika" ], student.Weaknesses)
     Assert.Equal("Memotivasi", student.Tone)
+    Assert.Equal("Siti sangat aktif di kelas dan selalu bersemangat dalam belajar.", student.Notes)
 
 [<Fact>]
 let ``Student dengan Strengths dan Weaknesses kosong tetap valid`` () =
@@ -45,7 +47,9 @@ let ``Student dengan Strengths dan Weaknesses kosong tetap valid`` () =
         { Name = "Budi"
           Strengths = []
           Weaknesses = []
-          Tone = "Sangat Formal" }
+          Tone = "Sangat Formal"
+          Notes = "" }
 
     Assert.Empty(student.Strengths)
     Assert.Empty(student.Weaknesses)
+    Assert.Equal("", student.Notes)
