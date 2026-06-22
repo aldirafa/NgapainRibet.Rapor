@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="src/NgapainRibet.Rapor.Core/NgapainRibet.Rapor.Core.fsproj" />
+  <Project Path="src/NgapainRibet.Rapor.UI/NgapainRibet.Rapor.UI.vbproj" />
+  <Project Path="tests/NgapainRibet.Rapor.Core.Tests/NgapainRibet.Rapor.Core.Tests.fsproj" />
+</Solution>

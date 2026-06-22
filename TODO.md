@@ -45,23 +45,29 @@ mesin yang relevan (Mac untuk Core, Windows untuk UI).
 
 ## 2. UI (VB.NET WinForms) — dikerjakan di Windows
 
-- [ ] Verifikasi scaffold build & run (lihat label status dari Core muncul di Form)
-- [ ] Layar input data siswa (manual + import Excel)
+- [x] Verifikasi scaffold build & run (lihat label status dari Core muncul di Form) ==> 22 juni
+- [ ] Layar input data siswa (manual)
 - [ ] Layar konfigurasi per siswa:
   - [ ] Pilihan Subject
   - [ ] Checklist Strengths (Capaian Tertinggi)
+      - [ ] Checklist + textbox, kita belum punya database strength and weakness. Database masukin fitur premium.
   - [ ] Checklist Weaknesses (Capaian Terendah)
+      - [ ] Sama dengan strength.
   - [ ] Pilihan Tone (Sangat Formal / Memotivasi / Tegas tapi Santun)
+      - [ ] Tone bisa diset custom selain disediain pilihannya.
+  - [ ] Catatan guru untuk siswa ini.
 - [ ] Layar progress saat model belum ada (UI untuk `DownloadState`)
 - [ ] Layar progress saat inference berjalan (UI untuk `AiState`)
 - [ ] Text box hasil narasi + tombol "Copy to Clipboard"
-- [ ] Export bulk ke Excel/Word
+    - [ ] Text boxnya rich text box atau apa gitu jadi enak bisa langsung copy-paste ke word lengkap sama formattingnya.
 - [ ] Penanganan error (model gagal load, download gagal, dll.) ditampilkan ke user
 
 ## 3. Premium Features (to be implemented setelah core functionality OK semua)
 
 - [ ] Import data siswa dari Excel (.xlsx) — **DITUNDA**, lihat catatan di bawah
 - [ ] Export hasil narasi ke Excel/Word secara bulk — **DITUNDA**, lihat catatan di bawah
+- [ ] Export bulk ke Excel/Word
+
 
 > **Catatan soal Excel import/export**: sengaja ditunda dari sesi ini.
 > Ini perlu keputusan library terpisah (mis. ClosedXML untuk Excel,
