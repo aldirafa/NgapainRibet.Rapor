@@ -61,6 +61,19 @@ module ModelManager =
     let isModelCached (fileName: string) : bool = File.Exists(getModelPath fileName)
 
     /// <summary>
+    /// Hitung SHA256 dari sebuah file, dikembalikan sebagai hex string
+    /// lowercase tanpa "-". Sengaja fungsi terpisah (bukan inline di
+    /// `downloadModelAsync`) supaya `FileStream`-nya dijamin sudah
+    /// di-dispose (lewat `use`) sebelum kontrol balik ke pemanggil —
+    /// kalau inline, file masih "terbuka" saat kita coba `File.Delete`
+    /// di percobaan checksum mismatch, dan itu akan gagal di Windows.
+    let private computeSha256Hex (path: string) : string =
+        use sha256Alg = System.Security.Cryptography.SHA256.Create()
+        use fileStream = File.OpenRead path
+        let hashBytes = sha256Alg.ComputeHash fileStream
+        BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant()
+
+    /// <summary>
     /// Download model dari `url` ke cache lokal sebagai `fileName`, melapor
     /// progress lewat `onProgress`. Aman dipanggil berkali-kali — kalau file
     /// sudah ada, langsung melapor `Completed` tanpa download ulang.
@@ -130,22 +143,27 @@ module ModelManager =
 
                     fileStream.Close()
                     File.Move(tempPath, destPath)
-                    onProgress.Invoke(Completed)
 
-                    // verify SHA256 checksum
-                    use sha256Alg = System.Security.Cryptography.SHA256.Create()
-                    use fileStreamForHash = File.OpenRead destPath
-                    let hashBytes = sha256Alg.ComputeHash fileStreamForHash
-
-                    let hashString =
-                        BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant()
+                    // Verifikasi integritas file SEBELUM melapor Completed —
+                    // kalau urutannya kebalik, UI sempat dikasih tahu "selesai"
+                    // padahal beberapa saat kemudian ternyata file-nya rusak.
+                    let hashString = computeSha256Hex destPath
 
                     // sha256 kalau ada "-" dihapus aja
-                    if hashString <> sha256.Replace("-", "").ToLowerInvariant() then
-                        onProgress.Invoke(Error "SHA256 checksum mismatch")
-                        failwith "SHA256 checksum mismatch"
+                    let expectedHash = sha256.Replace("-", "").ToLowerInvariant()
 
-                    return Completed
+                    if hashString <> expectedHash then
+                        // Hapus file yang gagal verifikasi — supaya fast-path
+                        // "File.Exists destPath -> Completed" di atas tidak
+                        // pernah mempercayai file yang sudah diketahui korup
+                        // pada percobaan berikutnya.
+                        File.Delete destPath
+                        let state = Error "SHA256 checksum mismatch — file model rusak atau berubah, coba download ulang"
+                        onProgress.Invoke state
+                        return state
+                    else
+                        onProgress.Invoke(Completed)
+                        return Completed
                 with
                 | :? OperationCanceledException ->
                     // dicancel pengguna, bukan error sungguhan

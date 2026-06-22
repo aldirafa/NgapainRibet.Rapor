@@ -46,6 +46,9 @@ module DomainModels =
             Weaknesses: string list
             /// Nada/Style narasi rapor yang dipilih guru (misal: "formal", "humoris", dst).
             Tone: string
-            /// Catatan tambahan yang ditulis guru di TextBox, dipakai untuk menyesuaikan narasi rapor.
+            /// Catatan permanen tentang siswa ini, disimpan sebagai bagian dari
+            /// profil siswa (bukan sekali pakai). Beda dengan `additionalNotes`
+            /// di `PromptBuilder.buildUserPrompt`, yang khusus untuk satu kali
+            /// proses generate tertentu saja dan tidak disimpan di profil siswa.
             Notes: string
         }

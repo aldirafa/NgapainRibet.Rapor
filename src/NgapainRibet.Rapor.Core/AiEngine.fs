@@ -105,9 +105,10 @@ module AiEngine =
     /// <param name="onToken">Callback untuk setiap token yang dihasilkan secara streaming, supaya UI bisa menampilkan narasi secara bertahap (efek "sedang mengetik"). Token yang diterima di sini mungkin belum membentuk kata lengkap, jadi pastikan UI menampilkannya dengan cara yang sesuai (misal: menambahkan ke buffer sementara sampai spasi muncul, dst).</param>
     /// <param name="onState">Callback untuk melaporkan status inference (Generating, Ready, Failed), supaya UI bisa menampilkan indikator yang sesuai (loading spinner, tombol disabled, dst).</param>
     /// <param name="ct">CancellationToken untuk membatalkan proses inference jika diperlukan (misal: user menekan tombol "Batal"). Pastikan untuk menangani pembatalan ini dengan benar di dalam fungsi, supaya tidak ada resource yang bocor atau state yang tidak konsisten.</param>
-    /// <returns>Task yang menghasilkan string narasi rapor lengkap setelah inference selesai, atau pesan error jika terjadi kegagalan.</returns>
+    /// <returns>Task yang menghasilkan Ok dengan narasi rapor lengkap jika berhasil, atau Error berisi pesan kegagalan.</returns>
     /// <remarks>
     /// Sengaja pakai <see cref="Action{T}"/> (bukan `IAsyncEnumerable`/event F#) karena ini jauh lebih mudah dikonsumsi dari VB.NET — lihat instruksi "Clean Interoperability" di spesifikasi proyek.
+    /// Hasil dibungkus <c>Result</c> (bukan string polos) supaya pesan error tidak pernah bisa disalahartikan sebagai narasi yang sungguhan dihasilkan AI — konsisten dengan pola di <see cref="loadModelAsync"/>.
     /// Pastikan untuk menangani status `Failed` dengan benar di UI, karena ini bisa terjadi jika model gagal dimuat, terjadi error saat inference, atau jika proses dibatalkan lewat <paramref name="ct"/>.
     /// </remarks>
     let generateAsync
@@ -118,7 +119,7 @@ module AiEngine =
         (onToken: Action<string>)
         (onState: Action<DomainModels.AiState>)
         (ct: CancellationToken)
-        : Task<string> =
+        : Task<Result<string, string>> =
         task {
             onState.Invoke DomainModels.AiState.Generating
 
@@ -148,9 +149,9 @@ module AiEngine =
                         keepGoing <- false
 
                 onState.Invoke DomainModels.AiState.Ready
-                return sb.ToString()
+                return Ok(sb.ToString())
 
             with ex ->
                 onState.Invoke(DomainModels.AiState.Failed ex.Message)
-                return sprintf "Error: %s" ex.Message
+                return Error ex.Message
         }

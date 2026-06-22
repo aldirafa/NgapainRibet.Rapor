@@ -22,6 +22,23 @@ mesin yang relevan (Mac untuk Core, Windows untuk UI).
 
 ## 1. Core (F#) — dikerjakan di Mac/VSCode
 
+> **Catatan review (22 Juni)**: beberapa hal di bawah ini ditemukan saat
+> review kode yang sudah di-push, lalu diperbaiki di sesi ini:
+> - `ModelManager.fs`: `Completed` sebelumnya dilaporkan SEBELUM verifikasi
+>   SHA256 — sudah diperbaiki supaya urutan benar (verifikasi dulu, baru
+>   lapor Completed). File yang gagal verifikasi sekarang juga dihapus
+>   supaya tidak "dipercaya" di percobaan berikutnya.
+> - `ModelManagerTests.fs`: tadinya download ulang ~1.1GB + hapus cache
+>   di SETIAP `dotnet test` — sekarang di-`Skip` default (manual saja) &
+>   tidak menghapus cache setelah sukses.
+> - `AiEngine.fs`: `generateAsync` tadinya mengembalikan error sebagai
+>   string biasa (bisa tertukar dengan narasi asli) — sekarang
+>   `Result<string, string>`, konsisten dengan `loadModelAsync`.
+> - `Student.Notes` vs `buildUserPrompt`'s `additionalNotes` — sudah
+>   dikonfirmasi: `Notes` = catatan permanen di profil siswa,
+>   `additionalNotes` = catatan sekali pakai untuk generate tertentu.
+>   Didokumentasikan di kode + ditambah test untuk keduanya.
+
 - [x] Desain domain model sesungguhnya di `DomainModels.fs`
   - [x] `Student` (Name, Strengths, Weaknesses, Tone)
   - [x] `DownloadState` (NotStarted | Downloading of float | Completed | Error of string)

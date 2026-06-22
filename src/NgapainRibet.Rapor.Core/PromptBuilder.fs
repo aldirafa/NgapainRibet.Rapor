@@ -90,7 +90,14 @@ module PromptBuilder =
     /// Bangun user prompt — pemicu singkat untuk LLM mulai menulis narasi.
     /// </summary>
     /// <param name="student">Data siswa.</param>
-    /// <param name="additionalNotes">Catatan tambahan dari guru.</param>
+    /// <param name="additionalNotes">
+    /// Catatan SEKALI PAKAI untuk proses generate kali ini saja (mis. "fokus
+    /// ke progress semester ini"). Beda dengan <see cref="Student.Notes"/>,
+    /// yang adalah catatan permanen tersimpan di profil siswa. Keduanya bisa
+    /// dipakai bersamaan — `Notes` masuk lewat system prompt (selalu relevan
+    /// untuk siswa ini), `additionalNotes` masuk lewat user prompt (konteks
+    /// khusus untuk generate ini saja).
+    /// </param>
     /// <returns>User prompt yang dibangun.</returns>
     let buildUserPrompt (student: Student) (additionalNotes: string option) : string =
         let r =

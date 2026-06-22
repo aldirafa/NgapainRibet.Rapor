@@ -1,73 +1,97 @@
-# NgapainRibet.Rapor — Solution Scaffold
+# NgapainRibet.Rapor
 
-Skeleton awal untuk **NgapainRibet.Rapor**, sesuai spesifikasi proyek
-(F# Core + VB.NET WinForms UI, di atas .NET 10.0).
+Aplikasi desktop offline berbasis AI lokal untuk membantu guru menyusun
+Deskripsi Capaian Kompetensi pada rapor Kurikulum Merdeka — tanpa biaya
+cloud API atau ketergantungan internet (selain saat download model
+sekali di awal). Lihat `AGENTS.md` untuk spesifikasi lengkap proyek.
 
 ## Status
 
-Ini adalah **scaffolding saja** — kerangka solusi yang bisa di-build,
-belum berisi logic AI, domain model lengkap, atau UI sesungguhnya.
-Tujuannya: memastikan struktur project & reference antar-bahasa
-(F# ↔ VB.NET) benar sebelum kita membangun logic di atasnya.
+**Core engine (F#) sudah fungsional dan teruji** — domain model, prompt
+builder, model download/cache manager (dengan verifikasi SHA256), dan
+wrapper LLamaSharp untuk inference, semuanya sudah berhasil di-build &
+di-test di Mac. **UI (VB.NET) masih skeleton** — Form kosong yang
+terbukti bisa memanggil Core, belum ada layar input/konfigurasi
+sesungguhnya.
 
-Yang sudah ada:
-- `NgapainRibet.Rapor.Core` (F#) — berisi `CoreInfo.getStatusMessage()`,
-  fungsi sederhana untuk membuktikan VB.NET bisa memanggil F#.
-- `NgapainRibet.Rapor.UI` (VB.NET WinForms) — Form kosong yang
-  menampilkan status dari Core di sebuah Label.
-- `DomainModels.fs` — placeholder kosong. Desain `Student`,
-  `DownloadState`, `AiState` (bagian 4 spesifikasi) **belum** dikerjakan;
-  ini langkah terpisah berikutnya.
-- `LLamaSharp` / `LLamaSharp.Backend.Cpu` — **belum** ditambahkan ke
-  `.fsproj` (di-comment sebagai TODO), supaya kita tidak menyeret
-  dependency besar sebelum kontrak Core jelas.
+Lihat `TODO.md` untuk status detail per item & catatan verifikasi.
 
-## Prasyarat untuk build di mesinmu
+### Yang sudah ada
 
-⚠️ **Penting**: project ini dibuat di sandbox tanpa .NET SDK terpasang
-dan tanpa akses ke nuget.org, jadi belum pernah benar-benar di-*build*
-atau di-*restore*. Sebelum membuka di Visual Studio / `dotnet build`,
-pastikan:
+- **`NgapainRibet.Rapor.Core`** (F#):
+  - `DomainModels.fs` — `Student` (termasuk `Notes` permanen per-siswa),
+    `DownloadState`, `AiState`.
+  - `PromptBuilder.fs` — bangun system/user prompt dinamis dari checklist
+    Strengths/Weaknesses/Tone + catatan guru, pakai istilah Kurikulum
+    Merdeka. Murni logic, di-cover unit test.
+  - `ModelManager.fs` — cek cache lokal & download GGUF dari HuggingFace
+    dengan progress reporting + verifikasi integritas SHA256.
+  - `AiEngine.fs` — wrapper LLamaSharp: load model (CPU-only) & jalankan
+    inference dengan streaming token ke UI. Hasil dibungkus `Result` agar
+    error tidak pernah tercampur dengan narasi asli.
+  - `Library.fs` (`CoreInfo`) — fungsi kecil pembukti interop F#↔VB.NET.
+- **`NgapainRibet.Rapor.Core.Tests`** (xUnit) — test untuk domain model &
+  prompt builder (cepat, tidak butuh model/network). Ada juga satu test
+  integrasi manual (`ModelManagerTests.fs`) yang di-`Skip` secara default
+  karena men-download model sungguhan — baca catatan di file itu kalau
+  perlu menjalankannya.
+- **`NgapainRibet.Rapor.UI`** (VB.NET WinForms) — `MainWindow` kosong yang
+  menampilkan status dari Core di sebuah Label. Sudah diverifikasi
+  build & run di Windows.
 
-1. **.NET 10.0 SDK** terpasang (cek dengan `dotnet --version`).
-2. Mesin punya **akses internet ke nuget.org** untuk restore package
-   nantinya (terutama setelah LLamaSharp ditambahkan).
-3. UI project menggunakan `net10.0-windows` + WinForms — jadi hanya
-   bisa di-build/dijalankan di **Windows** (atau via Visual Studio
-   di Windows). F# Core sendiri sebenarnya cross-platform.
+### Belum dikerjakan
+
+- UI sesungguhnya: input siswa, checklist Strengths/Weaknesses, pilihan
+  Tone, catatan guru, progress download/inference, textbox hasil.
+- Excel import & Excel/Word export — sengaja ditunda, direncanakan
+  sebagai **fitur premium** (lihat `TODO.md` bagian 3).
+
+## Prasyarat untuk build
+
+1. **.NET 10.0 SDK** terpasang (`dotnet --version`).
+2. Akses internet ke **nuget.org** untuk restore (LLamaSharp + backend
+   CPU-nya cukup besar, puluhan MB).
+3. UI project (`net10.0-windows` + WinForms) hanya bisa di-build/jalan
+   di **Windows**. Core sendiri cross-platform (F#, sudah diverifikasi
+   build & test di Mac).
 
 ## Cara membuka
 
 ```
-dotnet restore NgapainRibet.Rapor.sln
-dotnet build NgapainRibet.Rapor.sln
+dotnet restore NgapainRibet.Rapor.slnx
+dotnet build NgapainRibet.Rapor.slnx
+dotnet test tests/NgapainRibet.Rapor.Core.Tests
 ```
 
-Atau buka `NgapainRibet.Rapor.sln` langsung di Visual Studio 2026+.
+Atau buka `NgapainRibet.Rapor.slnx` langsung di Visual Studio 2026+.
 
 ## Struktur folder
 
 ```
 NgapainRibet.Rapor/
-├── NgapainRibet.Rapor.sln
+├── NgapainRibet.Rapor.slnx
+├── AGENTS.md                            ← spesifikasi proyek lengkap
+├── TODO.md                              ← status & langkah selanjutnya
 ├── src/
-│   ├── NgapainRibet.Rapor.Core/        (F#)
+│   ├── NgapainRibet.Rapor.Core/         (F#)
 │   │   ├── NgapainRibet.Rapor.Core.fsproj
-│   │   ├── DomainModels.fs             (placeholder)
-│   │   └── Library.fs                  (CoreInfo — fungsi tes interop)
-│   └── NgapainRibet.Rapor.UI/          (VB.NET WinForms)
+│   │   ├── DomainModels.fs
+│   │   ├── PromptBuilder.fs
+│   │   ├── ModelManager.fs
+│   │   ├── AiEngine.fs
+│   │   └── Library.fs
+│   └── NgapainRibet.Rapor.UI/           (VB.NET WinForms — skeleton)
 │       ├── NgapainRibet.Rapor.UI.vbproj
 │       ├── Program.vb
-│       ├── Form1.vb
-│       └── Form1.Designer.vb
-└── .gitignore
+│       ├── MainWindow.vb
+│       ├── MainWindow.Designer.vb
+│       └── My Project/
+└── tests/
+    └── NgapainRibet.Rapor.Core.Tests/   (xUnit)
 ```
 
-## Langkah selanjutnya yang disarankan
+## Langkah selanjutnya
 
-1. Desain domain model F# yang sesungguhnya (`Student`, `DownloadState`,
-   `AiState`) di `DomainModels.fs`.
-2. Tambahkan `LLamaSharp` & `LLamaSharp.Backend.Cpu` ke `.fsproj` setelah
-   kontrak Core (interface yang dipanggil UI) jelas.
-3. Bangun UI sesungguhnya: input data siswa, checklist kekuatan/kelemahan,
-   pilihan tone.
+Lihat `TODO.md` bagian 2 untuk daftar layar UI yang direncanakan
+(checklist Strengths/Weaknesses, pilihan Tone custom, catatan guru,
+rich text box hasil, dst).

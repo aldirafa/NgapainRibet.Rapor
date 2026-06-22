@@ -52,3 +52,25 @@ let ``buildUserPrompt menyertakan nama siswa`` () =
 let ``buildUserPrompt singkat dan to the point`` () =
     let prompt = buildUserPrompt sampleStudent None
     Assert.True(prompt.Length < 150, "User prompt seharusnya pendek — instruksi detail ada di system prompt")
+
+[<Fact>]
+let ``buildSystemPrompt menyertakan Student Notes ketika ada`` () =
+    let prompt = buildSystemPrompt "Matematika" sampleStudent
+    Assert.Contains("Siti sangat aktif di kelas", prompt)
+
+[<Fact>]
+let ``buildSystemPrompt tidak menyertakan baris Notes ketika kosong`` () =
+    let student = { sampleStudent with Notes = "" }
+    let prompt = buildSystemPrompt "Matematika" student
+    Assert.DoesNotContain("Catatan tambahan dari guru", prompt)
+
+[<Fact>]
+let ``buildUserPrompt menyertakan additionalNotes ketika ada`` () =
+    let prompt = buildUserPrompt sampleStudent (Some "fokus ke progress semester ini")
+    Assert.Contains("fokus ke progress semester ini", prompt)
+
+[<Fact>]
+let ``buildUserPrompt tidak menambahkan apapun ketika additionalNotes None`` () =
+    let withNone = buildUserPrompt sampleStudent None
+    let withEmptyString = buildUserPrompt sampleStudent (Some "   ")
+    Assert.Equal(withNone, withEmptyString)
