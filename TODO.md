@@ -63,21 +63,22 @@ mesin yang relevan (Mac untuk Core, Windows untuk UI).
 ## 2. UI (VB.NET WinForms) — dikerjakan di Windows
 
 - [x] Verifikasi scaffold build & run (lihat label status dari Core muncul di Form) ==> 22 juni
-- [ ] Layar input data siswa (manual)
+- [x] Layar input data siswa (manual)
+    - ==> 22 Juni: `InputDataSiswa.vb`, tinggal dicek dan improve code. Jadinya dibuat form terpisah
 - [ ] Layar konfigurasi per siswa:
-  - [ ] Pilihan Subject
-  - [ ] Checklist Strengths (Capaian Tertinggi)
+  - [ ] Pilihan Subject ==> User control
+  - [ ] Checklist Strengths (Capaian Tertinggi) ==> User control
       - [ ] Checklist + textbox, kita belum punya database strength and weakness. Database masukin fitur premium.
-  - [ ] Checklist Weaknesses (Capaian Terendah)
+  - [ ] Checklist Weaknesses (Capaian Terendah) ==> User control
       - [ ] Sama dengan strength.
-  - [ ] Pilihan Tone (Sangat Formal / Memotivasi / Tegas tapi Santun)
+  - [ ] Pilihan Tone (Sangat Formal / Memotivasi / Tegas tapi Santun) ==> User control
       - [ ] Tone bisa diset custom selain disediain pilihannya.
-  - [ ] Catatan guru untuk siswa ini.
-- [ ] Layar progress saat model belum ada (UI untuk `DownloadState`)
-- [ ] Layar progress saat inference berjalan (UI untuk `AiState`)
+  - [ ] Catatan guru untuk siswa ini. ==> Text box
+- [ ] Layar progress saat model belum ada (UI untuk `DownloadState`) ==> User control
+- [ ] Layar progress saat inference berjalan (UI untuk `AiState`) ==> User control
 - [ ] Text box hasil narasi + tombol "Copy to Clipboard"
     - [ ] Text boxnya rich text box atau apa gitu jadi enak bisa langsung copy-paste ke word lengkap sama formattingnya.
-- [ ] Penanganan error (model gagal load, download gagal, dll.) ditampilkan ke user
+- [ ] Penanganan error (model gagal load, download gagal, dll.) ditampilkan ke user ==> Form custom atau MessageBox?
 
 ## 3. Premium Features (to be implemented setelah core functionality OK semua)
 
