@@ -65,20 +65,28 @@ mesin yang relevan (Mac untuk Core, Windows untuk UI).
 - [x] Verifikasi scaffold build & run (lihat label status dari Core muncul di Form) ==> 22 juni
 - [x] Layar input data siswa (manual)
     - ==> 22 Juni: `InputDataSiswa.vb`, tinggal dicek dan improve code. Jadinya dibuat form terpisah
-- [ ] Layar konfigurasi per siswa:
-  - [ ] Pilihan Subject ==> User control
-  - [ ] Checklist Strengths (Capaian Tertinggi) ==> User control
-      - [ ] Checklist + textbox, kita belum punya database strength and weakness. Database masukin fitur premium.
-  - [ ] Checklist Weaknesses (Capaian Terendah) ==> User control
-      - [ ] Sama dengan strength.
-  - [ ] Pilihan Tone (Sangat Formal / Memotivasi / Tegas tapi Santun) ==> User control
-      - [ ] Tone bisa diset custom selain disediain pilihannya.
-  - [ ] Catatan guru untuk siswa ini. ==> Text box
-- [ ] Layar progress saat model belum ada (UI untuk `DownloadState`) ==> User control
-- [ ] Layar progress saat inference berjalan (UI untuk `AiState`) ==> User control
-- [ ] Text box hasil narasi + tombol "Copy to Clipboard"
-    - [ ] Text boxnya rich text box atau apa gitu jadi enak bisa langsung copy-paste ke word lengkap sama formattingnya.
-- [ ] Penanganan error (model gagal load, download gagal, dll.) ditampilkan ke user ==> Form custom atau MessageBox?
+    - ==> 23 Juni: direview & diperbaiki (autocomplete tone, validasi nama kosong, AcceptButton/CancelButton, baca field cuma saat Simpan).
+- [x] Layar konfigurasi per siswa:
+  - [x] Pilihan Subject ==> User control
+      - ==> 23 Juni: bukan UserControl terpisah (cuma 1 pemakaian) — ComboBox langsung di `GenerateNarasi.vb`, pola sama persis dengan combobox Tone (autocomplete custom source, custom value tetap boleh).
+  - [x] Checklist Strengths (Capaian Tertinggi) ==> User control
+      - ==> 23 Juni: `Controls/EditableStringListControl.vb` (textbox+Tambah+CheckedListBox+Hapus Terpilih), dipasang di `InputDataSiswa` (bukan di layar generate) karena Strengths adalah field `Student`. Checklist topik tetap dari database TIDAK dibuat (sesuai catatan di bawah, ditunda jadi premium).
+  - [x] Checklist Weaknesses (Capaian Terendah) ==> User control
+      - ==> 23 Juni: instance kedua dari `EditableStringListControl`, sama seperti Strengths.
+  - [x] Pilihan Tone (Sangat Formal / Memotivasi / Tegas tapi Santun) ==> User control
+      - ==> sudah ada dari sesi sebelumnya di `InputDataSiswa` (ComboBox custom-value), direview ulang 23 Juni.
+  - [x] Catatan guru untuk siswa ini. ==> Text box
+      - ==> 23 Juni: `TextBox_CatatanGuru` ditambahkan ke `InputDataSiswa` — sebelumnya `Student.Notes` ga pernah bisa diisi user sama sekali (gap, sudah ditutup).
+- [x] Layar progress saat model belum ada (UI untuk `DownloadState`) ==> User control
+    - ==> 23 Juni: `Controls/DownloadProgressControl.vb`, render pasif (ProgressBar + status + tombol Batal), dipasang di `GenerateNarasi.vb`.
+- [x] Layar progress saat inference berjalan (UI untuk `AiState`) ==> User control
+    - ==> 23 Juni: `Controls/InferenceProgressControl.vb`, render pasif (marquee progress + status + tombol Batal), dipasang di `GenerateNarasi.vb`.
+- [x] Text box hasil narasi + tombol "Copy to Clipboard"
+    - ==> 23 Juni: `RichTextBox_Hasil` + `IconButton_CopyClipboard` di dalam `InferenceProgressControl`, token streaming langsung di-append ke situ.
+- [x] Penanganan error (model gagal load, download gagal, dll.) ditampilkan ke user ==> Form custom atau MessageBox?
+    - ==> 23 Juni: diputuskan pakai `MessageBox.Show(..., MessageBoxIcon.Error)`, semua dipanggil dari `GenerateNarasi.vb` (lihat tabel error handling di plan).
+- [x] Form baru `GenerateNarasi.vb` (orkestrasi Subject + catatan tambahan + Generate + progress + hasil), `MainWindow` sekarang punya lifecycle Engine LLamaSharp (lazy-load sekali, reuse, dispose saat `FormClosing`), tombol utama diganti dari "Uji Coba Input Siswa" jadi "Buat Narasi Rapor" dengan alur nyata: InputDataSiswa → GenerateNarasi.
+    - ==> Diverifikasi: `dotnet build NgapainRibet.Rapor.slnx` & `dotnet test tests/NgapainRibet.Rapor.Core.Tests` sukses di Mac (0 error, 17 passed). **BELUM** diverifikasi run sungguhan di Windows (download model asli, generate end-to-end, cek RAM) — lihat catatan verifikasi di plan `/Users/aldi/.claude/plans/gas-ke-todo-berikutnya-joyful-gizmo.md`.
 
 ## 3. Premium Features (to be implemented setelah core functionality OK semua)
 

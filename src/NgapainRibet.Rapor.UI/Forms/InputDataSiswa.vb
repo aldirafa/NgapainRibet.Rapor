@@ -1,4 +1,4 @@
-﻿Imports Microsoft.FSharp.Collections
+Imports Microsoft.FSharp.Collections
 Imports NgapainRibet.Rapor.Core
 Imports System.ComponentModel
 
@@ -9,6 +9,14 @@ Public Class InputDataSiswa
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)>
     Public Property DataSiswa As DomainModels.Student
     Public ReadOnly Property OriginalDataSiswa As DomainModels.Student
+
+    Private ReadOnly _toneOptions As String() = {
+        "Wali kelas yang formal dan profesional, gaya akademisi guru di sekolah",
+        "Wali kelas yang santai dan ramah, gaya teman sebaya",
+        "Wali kelas yang akrab baik dengan orang tua dan dengan peserta didiknya",
+        "Wali kelas yang sedang serius karena peserta didik ini terlibat kasus",
+        "Wali kelas yang penuh perhatian dan peduli terhadap perkembangan peserta didiknya"
+    }
 
     Public Sub New()
 
@@ -30,47 +38,59 @@ Public Class InputDataSiswa
         OriginalDataSiswa = data
     End Sub
 
-    Private Sub TextboxNamaPesertaDidik_TextChanged(sender As Object, e As EventArgs) Handles TextBox_NamaPesertaDidik.TextChanged
-        If Not String.IsNullOrWhiteSpace(TextBox_NamaPesertaDidik.Text) Then
-            DataSiswa = New DomainModels.Student(TextBox_NamaPesertaDidik.Text, DataSiswa.Strengths, DataSiswa.Weaknesses, DataSiswa.Tone, DataSiswa.Notes)
-        End If
-    End Sub
-
     Private Sub InputDataSiswa_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        ' Populate some sample tones
-        ComboBox_GayaTeksLaporan.Items.Clear()
-        ComboBox_GayaTeksLaporan.Items.AddRange({"Wali kelas yang formal dan profesional, gaya akademisi guru di sekolah", "Wali kelas yang santai dan ramah, gaya teman sebaya", "Wali kelas yang akrab baik dengan orang tua dan dengan peserta didiknya", "Wali kelas yang sedang serius karena peserta didik ini terlibat kasus", "Wali kelas yang penuh perhatian dan peduli terhadap perkembangan peserta didiknya", DataSiswa.Tone}.Distinct().OrderBy(Function(x) x).ToArray())
+        ' Populate pilihan tone (termasuk tone siswa ini kalau custom/belum ada di daftar)
+        Dim toneItems =
+            _toneOptions.
+            Append(DataSiswa.Tone).
+            Where(Function(t) Not String.IsNullOrWhiteSpace(t)).
+            Distinct().
+            OrderBy(Function(x) x).
+            ToArray()
 
-        ' Isi combo box dan textbox dengan data siswa yang ada
+        ComboBox_GayaTeksLaporan.Items.Clear()
+        ComboBox_GayaTeksLaporan.Items.AddRange(toneItems)
+
+        ' AutoCompleteSource = CustomSource butuh AutoCompleteCustomSource diisi manual,
+        ' kalau tidak autocomplete tidak akan menyarankan apa-apa.
+        ComboBox_GayaTeksLaporan.AutoCompleteCustomSource.Clear()
+        ComboBox_GayaTeksLaporan.AutoCompleteCustomSource.AddRange(toneItems)
+
+        ' Isi textbox & combobox dengan data siswa yang ada
         TextBox_NamaPesertaDidik.Text = DataSiswa.Name
-        ComboBox_GayaTeksLaporan.SelectedItem = DataSiswa.Tone
+        ComboBox_GayaTeksLaporan.Text = DataSiswa.Tone
+        StrengthsControl.Items = DataSiswa.Strengths
+        WeaknessesControl.Items = DataSiswa.Weaknesses
+        TextBox_CatatanGuru.Text = DataSiswa.Notes
     End Sub
 
     Private Sub ButtonCancel_Click(sender As Object, e As EventArgs) Handles Button_Cancel.Click
-        Me.DialogResult = DialogResult.Cancel
         DataSiswa = OriginalDataSiswa
+        Me.DialogResult = DialogResult.Cancel
         Me.Close()
     End Sub
 
     Private Sub ButtonSimpan_Click(sender As Object, e As EventArgs) Handles Button_Simpan.Click
+        If String.IsNullOrWhiteSpace(TextBox_NamaPesertaDidik.Text) Then
+            MessageBox.Show("Nama peserta didik tidak boleh kosong.", "Data belum lengkap", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            TextBox_NamaPesertaDidik.Focus()
+            Return
+        End If
+
+        ' Baca semua field sekaligus di sini (bukan per-keystroke) supaya
+        ' DataSiswa selalu konsisten dengan apa yang terlihat di form saat
+        ' disimpan, dan supaya nambah field baru nanti (checklist, catatan)
+        ' cukup disentuh di satu tempat ini saja.
+        DataSiswa =
+            New DomainModels.Student(
+                TextBox_NamaPesertaDidik.Text.Trim(),
+                StrengthsControl.Items,
+                WeaknessesControl.Items,
+                ComboBox_GayaTeksLaporan.Text,
+                TextBox_CatatanGuru.Text
+            )
+
         Me.DialogResult = DialogResult.OK
         Me.Close()
-    End Sub
-
-    Private Sub ComboBoxGayaTeksLaporan_TextUpdate(sender As Object, e As EventArgs) Handles ComboBox_GayaTeksLaporan.TextUpdate, ComboBox_GayaTeksLaporan.SelectedIndexChanged
-        DataSiswa = New DomainModels.Student(DataSiswa.Name, DataSiswa.Strengths, DataSiswa.Weaknesses, ComboBox_GayaTeksLaporan.Text, DataSiswa.Notes)
-        Debug.WriteLine($"Tone updated to: {DataSiswa.Tone}")
-    End Sub
-
-    Private Sub Input_KeyDown(sender As Object, e As KeyEventArgs) Handles TextBox_NamaPesertaDidik.KeyDown, ComboBox_GayaTeksLaporan.KeyDown
-        If e.KeyCode = Keys.Enter Then
-            e.SuppressKeyPress = True ' Prevent the ding sound
-            e.Handled = True
-            Button_Simpan.PerformClick()
-        ElseIf e.KeyCode = Keys.Escape Then
-            e.SuppressKeyPress = True
-            e.Handled = True
-            Button_Cancel.PerformClick()
-        End If
     End Sub
 End Class

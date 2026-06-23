@@ -5,6 +5,7 @@
     <LangVersion>latest</LangVersion>
     <RootNamespace>NgapainRibet.Rapor.Core</RootNamespace>
     <AssemblyName>NgapainRibet.Rapor.Core</AssemblyName>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
 
     <!--
       Catatan: Project ini di-set sebagai library biasa (bukan AnyCPU murni)

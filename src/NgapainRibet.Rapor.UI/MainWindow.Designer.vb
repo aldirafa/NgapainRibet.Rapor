@@ -43,7 +43,7 @@ Partial Class MainWindow
         IconButton1.Name = "IconButton1"
         IconButton1.Size = New System.Drawing.Size(175, 23)
         IconButton1.TabIndex = 1
-        IconButton1.Text = "Uji Coba Input Siswa"
+        IconButton1.Text = "Buat Narasi Rapor"
         IconButton1.UseVisualStyleBackColor = True
         ' 
         ' MainWindow
