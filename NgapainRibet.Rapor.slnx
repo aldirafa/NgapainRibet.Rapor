@@ -1,5 +1,14 @@
 <Solution>
-  <Project Path="src/NgapainRibet.Rapor.Core/NgapainRibet.Rapor.Core.fsproj" />
-  <Project Path="src/NgapainRibet.Rapor.UI/NgapainRibet.Rapor.UI.vbproj" />
-  <Project Path="tests/NgapainRibet.Rapor.Core.Tests/NgapainRibet.Rapor.Core.Tests.fsproj" />
+  <Configurations>
+    <Platform Name="x64" />
+  </Configurations>
+  <Project Path="src/NgapainRibet.Rapor.Core/NgapainRibet.Rapor.Core.fsproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="src/NgapainRibet.Rapor.UI/NgapainRibet.Rapor.UI.vbproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="tests/NgapainRibet.Rapor.Core.Tests/NgapainRibet.Rapor.Core.Tests.fsproj">
+      <Platform Solution="*|x64" Project="x64" />
+</Project>
 </Solution>

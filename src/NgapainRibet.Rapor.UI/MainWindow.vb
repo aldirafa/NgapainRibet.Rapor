@@ -12,7 +12,7 @@ Public Class MainWindow
 
     Dim dummyStrengths = New FSharpList(Of String)("Kreatif", New FSharpList(Of String)("Inovatif", FSharpList(Of String).Empty))
     Dim dummyWeaknesses = New FSharpList(Of String)("Kurang disiplin", New FSharpList(Of String)("Terlalu santai", FSharpList(Of String).Empty))
-    Private _currentStudent As DomainModels.Student = New DomainModels.Student("Budi Santoso", dummyStrengths, dummyWeaknesses, "Wali kelas yang santai dan ramah, gaya teman sebaya", "Perlu perhatian lebih pada disiplin")
+    Private _currentStudent As New DomainModels.Student("Budi Santoso", dummyStrengths, dummyWeaknesses, "Wali kelas yang santai dan ramah, gaya teman sebaya", "Perlu perhatian lebih pada disiplin")
 
     ' Engine LLamaSharp di-load sekali (lazy, saat Generate pertama kali
     ' diminta) dan disimpan selama aplikasi jalan — supaya generate

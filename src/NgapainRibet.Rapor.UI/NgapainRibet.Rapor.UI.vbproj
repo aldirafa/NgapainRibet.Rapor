@@ -11,6 +11,7 @@
     <ImportedNamespaces>
       System.IO=False,System.Text=False,System.Text.RegularExpressions=False,System.Threading=False,System.Timers=False,System.Windows.Forms=False,System.Windows.Forms.Design=False,System.Windows.Forms.Design.Behavior=False,System.Windows.Forms.Layout=False,System.Windows.Forms.PropertyGridInternal=False,Microsoft.VisualBasic=True,System=True,System.Collections=True,System.Collections.Generic=True,System.Diagnostics=True,System.Linq=True,System.Xml.Linq=True,System.Threading.Tasks=True,NgapainRibet.Rapor.UI=True</ImportedNamespaces>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <Platforms>x64</Platforms>
 
     <!--
       Catatan: target framework sengaja "net10.0-windows" (bukan

@@ -5,6 +5,7 @@
     <IsPackable>false</IsPackable>
     <RootNamespace>NgapainRibet.Rapor.Core.Tests</RootNamespace>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <Platforms>x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>

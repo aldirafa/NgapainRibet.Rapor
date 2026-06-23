@@ -88,12 +88,50 @@ mesin yang relevan (Mac untuk Core, Windows untuk UI).
 - [x] Form baru `GenerateNarasi.vb` (orkestrasi Subject + catatan tambahan + Generate + progress + hasil), `MainWindow` sekarang punya lifecycle Engine LLamaSharp (lazy-load sekali, reuse, dispose saat `FormClosing`), tombol utama diganti dari "Uji Coba Input Siswa" jadi "Buat Narasi Rapor" dengan alur nyata: InputDataSiswa → GenerateNarasi.
     - ==> Diverifikasi: `dotnet build NgapainRibet.Rapor.slnx` & `dotnet test tests/NgapainRibet.Rapor.Core.Tests` sukses di Mac (0 error, 17 passed). **BELUM** diverifikasi run sungguhan di Windows (download model asli, generate end-to-end, cek RAM) — lihat catatan verifikasi di plan `/Users/aldi/.claude/plans/gas-ke-todo-berikutnya-joyful-gizmo.md`.
 
-## 3. Premium Features (to be implemented setelah core functionality OK semua)
+## 2A. Core + UI Bugfixes and Features sebelum premium
+
+### Bugs found on 23 Juni 2026 testing
+
+- [ ] **CRITICAL** Text generation tidak berhenti-berhenti. Dia berjalan indefinitely. Idealnya, outputnya mungkin satu paragraf teks pendek saja, tapi kita bisa buat agar bisa diatur seberapa panjang teksnya (pendek, biasa, panjang).
+- [ ] Tolong bantu double check untuk memastikan semua project dan solutionnya compile x64/AMD64 (nyesuain dengan Llama), jangan sampai AnyCPU.
+
+### Features
+
+- [ ] **UI** Flownya nanti kurang lebih seperti ini.
+
+```mermaid
+graph LR
+    A[Start] --> C{Main Loop} --> C1[Close/Quit] --> B[End]
+    C --> C2[Input Data Siswa] --> D{Form Pilih Siswa} --> D1[Input data siswa individual] --> D
+    D --> C
+    C --> C3[Input Data Mata Pelajaran] --> E{Form Pilih Mapel} --> E1[Input data mapel satuan] --> E
+    E --> C
+    C --> C4[Generate Teks] --> F[Form + Output Generator] --> C
+    C --> C5[About] --> C
+    C --> C6[Beli Premium] --> G([Premium Flow])
+```
+
+- [ ] **Core** Data yang dibutuhkan (Model), updated:
+
+1. Data siswa satuan: Nama lengkap, jenis kelamin, usia, kelas, kelebihan individual, kekurangan individual, catatan guru tentang siswa ini
+2. Data mapel satuan: Nama mapel, guru pengampu, list capaian pembelajaran (CP) ==> list tujuan pembelajaran (TP) (setiap CP terdiri dari kumpulan TP), tahun ajaran, semester
+3. Data untuk generating: siswa mana yang akan di-generate, mapel apa, list TP mapel itu yang tercapai (CP dinyatakan tercapai jika TP tercapai), list TP mapel itu yang tidak tercapai (TP yang tidak dipilih sama sekali berarti tidak diajarkan), catatan guru untuk generation kali ini, panjang teks generasi (pendek, panjang, biasa)
+
+Ada lagi yang kepikiran?
+
+- [ ] **Core** Generation text agar menggunakan Markdown.
+- [ ] **UI** Output text generator agar bisa parse dan display Markdown text.
+- [ ] **UI** Tampilan dibuat lebih cantik dan rapi. Boleh install NuGet package yg sesuai untuk tujuan ini.
+- [ ] Update todo section 3 ke bawah, menyesuaikan dengan perubahan2 terbaru ini.
+
+
+## 3. Premium Features (to be implemented setelah 2A OK Semua)
 
 - [ ] Import data siswa dari Excel (.xlsx) — **DITUNDA**, lihat catatan di bawah
+- [ ] Import data mapel dari Excel (.xlsx) – **DITUNDA**, sama dengan di bawah
+- [ ] Import data generasi dari Excel (.xlsx) – **DITUNDA**, untuk mendukung fitur bulk generation yang bisa diexport (dua fitur bawah), ditunda karena perlu mikir dulu desain excelnya biar ga ribet
 - [ ] Export hasil narasi ke Excel/Word secara bulk — **DITUNDA**, lihat catatan di bawah
-- [ ] Export bulk ke Excel/Word
-
+- [ ] Export bulk ke Excel/Word **DITUNDA**
 
 > **Catatan soal Excel import/export**: sengaja ditunda dari sesi ini.
 > Ini perlu keputusan library terpisah (mis. ClosedXML untuk Excel,
